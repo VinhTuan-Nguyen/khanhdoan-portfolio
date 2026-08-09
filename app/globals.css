@@ -498,8 +498,12 @@ a {
   transition: transform 180ms ease;
 }
 
+.primary-button .action-icon {
+  transform: rotate(90deg);
+}
+
 .primary-button:hover .action-icon {
-  transform: translateX(3px);
+  transform: rotate(90deg) translateX(3px);
 }
 
 .text-button:hover .action-icon,
@@ -737,11 +741,12 @@ a {
 
 .numbers-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .stat {
   position: relative;
+  min-width: 0;
   min-height: 180px;
   display: flex;
   flex-direction: column;
@@ -809,11 +814,6 @@ a {
 
 .stat:first-child {
   border-left: 1px solid var(--line-light);
-  border-radius: var(--radius-md) 0 0 var(--radius-md);
-}
-
-.stat:last-child {
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
 }
 
 .stat strong {
@@ -1022,13 +1022,13 @@ a {
 .expertise-row:hover {
   padding-inline: 16px;
   background: rgba(255, 255, 255, 0.45);
-  border-radius: var(--radius-md);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
 }
 
 .expertise-row .index {
   color: var(--muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .expertise-row h3 {
@@ -1488,7 +1488,7 @@ a {
   left: -20px;
   bottom: -120px;
   color: rgba(22, 88, 123, .055);
-  font-size: 360px;
+  font-size: clamp(240px, 30vw, 360px);
   font-weight: 800;
   letter-spacing: -.02em;
 }
@@ -1578,16 +1578,17 @@ footer {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 88px;
-  min-height: 54px;
-  padding: 0 18px;
+  width: 58px;
+  height: 58px;
+  padding: 0;
   border: 1px solid rgba(255, 255, 255, .35);
-  border-radius: var(--radius-md);
+  border-radius: 50%;
   background: var(--lime);
   color: var(--ink);
   box-shadow: 10px 12px 34px rgba(4, 35, 52, .28);
-  font-size: 20px;
-  font-weight: 800;
+  font-size: 27px;
+  font-weight: 900;
+  line-height: 1;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -1604,6 +1605,13 @@ footer {
   visibility: visible;
   pointer-events: auto;
   transform: translateY(0) scale(1);
+}
+
+.back-to-top span {
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: 1;
 }
 
 .footer-inner > a:hover,
@@ -1812,13 +1820,9 @@ footer {
   .performance-board-stage { transform: translate3d(0, -4px, 0); }
   .performance-board { min-height: 470px; transform: rotateY(-2.5deg) rotateX(1.3deg) rotateZ(-.3deg); }
   .scroll-cue { display: none; }
-  .numbers-grid { grid-template-columns: 1fr 1fr; }
+  .numbers-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .stat { min-height: 145px; border-bottom: 1px solid var(--line-light); }
   .stat:nth-child(odd) { border-left: 1px solid var(--line-light); }
-  .stat:first-child { border-radius: var(--radius-md) 0 0 0; }
-  .stat:nth-child(2) { border-radius: 0 var(--radius-md) 0 0; }
-  .stat:nth-child(3) { border-radius: 0 0 0 var(--radius-md); }
-  .stat:last-child { border-radius: 0 0 var(--radius-md) 0; }
   .section-heading { grid-template-columns: 1fr; gap: 28px; }
   .expertise-row { grid-template-columns: 45px 1fr 25px; gap: 18px; padding: 30px 0; }
   .expertise-row p { grid-column: 2 / 4; }
@@ -1839,6 +1843,10 @@ footer {
   .hero-description { font-size: 15px; }
   .hero-actions { align-items: stretch; flex-direction: column; gap: 14px; }
   .primary-button, .text-button { width: 100%; }
+  .stat { padding: 24px 16px; }
+  .stat strong { font-size: clamp(30px, 9.5vw, 42px); letter-spacing: -.055em; }
+  .stat > span { font-size: clamp(10px, 3vw, 12px); }
+  .stat-info-trigger { top: 12px; right: 12px; width: 22px; height: 22px; }
   .performance-board-stage { transform: translate3d(0, -2px, 0); }
   .performance-board { min-height: 440px; padding: 16px; transform: none; }
   .board-main strong { font-size: 60px; }
@@ -1847,6 +1855,13 @@ footer {
   .section-heading { margin-bottom: 46px; }
   .section-heading h2, .about h2, .experience h2 { font-size: 42px; }
   .contact h2 { font-size: 53px; }
+  .contact::after {
+    left: 0;
+    bottom: -.08em;
+    font-size: clamp(170px, 58vw, 240px);
+    line-height: .8;
+    white-space: nowrap;
+  }
   .project-grid { grid-template-columns: 1fr; }
   .project-visual { height: 230px; }
   .project-content { min-height: 310px; padding: 25px; }
@@ -1862,9 +1877,8 @@ footer {
   .footer-inner > a {
     right: max(16px, env(safe-area-inset-right));
     bottom: max(16px, env(safe-area-inset-bottom));
-    min-width: 78px;
-    min-height: 50px;
-    padding-inline: 14px;
+    width: 54px;
+    height: 54px;
   }
   .modal-backdrop { padding: 15px; }
   .modal-content { padding: 48px 24px 32px; }

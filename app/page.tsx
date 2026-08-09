@@ -972,7 +972,7 @@ export default function Home() {
             aria-hidden={!showBackToTop}
             tabIndex={showBackToTop ? 0 : -1}
           >
-            TOP ↑
+            <span aria-hidden="true">↑</span>
           </a>
         </div>
       </footer>
