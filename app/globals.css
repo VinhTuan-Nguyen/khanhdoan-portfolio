@@ -513,7 +513,7 @@ a {
 
 .text-button {
   min-width: 140px;
-  padding-inline: 0;
+  padding-inline: 16px;
   border: 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   background: transparent;
@@ -1165,12 +1165,17 @@ a {
 .visual-label {
   position: absolute;
   font-family: var(--font-geist-mono), monospace;
-  font-size: 9px;
   letter-spacing: .08em;
 }
 
-.project-number { top: 18px; left: 18px; }
-.visual-label { right: 18px; bottom: 18px; }
+.project-number {
+  top: 18px;
+  left: 18px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.visual-label { right: 18px; bottom: 18px; font-size: 9px; }
 
 .project-visual > strong {
   position: relative;
@@ -1859,8 +1864,15 @@ footer {
   .hero { padding-top: 118px; }
   .hero h1 { font-size: 42px; }
   .hero-description { font-size: 15px; }
-  .hero-actions { align-items: stretch; flex-direction: column; gap: 14px; }
-  .primary-button, .text-button { width: 100%; }
+  .hero-actions { align-items: stretch; flex-direction: row; gap: 12px; }
+  .primary-button,
+  .text-button {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+    gap: 12px;
+    padding-inline: 14px;
+  }
   .stat { padding: 24px 16px; }
   .stat strong { font-size: clamp(30px, 9.5vw, 42px); letter-spacing: -.055em; }
   .stat > span { font-size: clamp(10px, 3vw, 12px); }
