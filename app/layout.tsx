@@ -1,25 +1,7 @@
 import type { Metadata } from "next";
-import { Bodoni_Moda, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 export const dynamic = "force-static";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const bodoni = Bodoni_Moda({
-  variable: "--font-bodoni",
-  subsets: ["latin", "latin-ext"],
-  weight: "variable",
-  style: ["normal", "italic"],
-});
 
 const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
 const title = "Khánh Đoan — Full-stack Marketer & Chuyên gia Performance Ads";
@@ -51,9 +33,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi">
-      <body className={`${geistSans.variable} ${geistMono.variable} ${bodoni.variable}`}>
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
