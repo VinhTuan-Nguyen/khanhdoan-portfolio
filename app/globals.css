@@ -29,7 +29,7 @@
 }
 
 html {
-  container-type: inline-size;
+  overflow-x: clip;
   scroll-behavior: smooth;
   scroll-padding-top: 76px;
 }
@@ -385,8 +385,8 @@ a {
   content: "";
   top: 0;
   bottom: 0;
-  left: calc((100cqw - 100%) / -2);
-  width: 100cqw;
+  left: calc((100vw - 100%) / -2);
+  width: 100vw;
   background:
     linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px),
