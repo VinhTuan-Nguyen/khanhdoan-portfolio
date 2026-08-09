@@ -1843,6 +1843,13 @@ footer {
   .portrait-placeholder { width: 100%; margin-top: 0; }
   .experience-layout { grid-template-columns: 1fr; }
   .contact-bottom { grid-template-columns: 1fr; gap: 42px; }
+  .contact::after {
+    left: 0;
+    bottom: 0;
+    font-size: clamp(85px, 21vw, 140px);
+    line-height: .8;
+    white-space: nowrap;
+  }
   .project-modal { grid-template-columns: 1fr; max-height: calc(100vh - 30px); }
   .modal-visual { position: relative; min-height: 320px; }
 }
