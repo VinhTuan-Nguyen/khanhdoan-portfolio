@@ -1,6 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type PointerEvent as ReactPointerEvent,
+  type WheelEvent as ReactWheelEvent,
+} from "react";
 
 type Language = "vi" | "en";
 type Category = "All" | "Ads" | "Content" | "Design" | "Campaign Planning" | "Social Media";
@@ -509,6 +517,11 @@ function AnimatedSpend({ language }: { language: Language }) {
 export default function Home() {
   const [language, setLanguage] = useState<Language>("vi");
   const [activeFilter, setActiveFilter] = useState<Category>("All");
+  const [activeCarouselIndex, setActiveCarouselIndex] = useState(projects.length);
+  const [focusedCarouselIndex, setFocusedCarouselIndex] = useState(projects.length);
+  const [carouselInstant, setCarouselInstant] = useState(false);
+  const [carouselPaused, setCarouselPaused] = useState(false);
+  const [carouselInteracting, setCarouselInteracting] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const [showBackToTop, setShowBackToTop] = useState(false);
@@ -518,6 +531,15 @@ export default function Home() {
   const [expertiseVisible, setExpertiseVisible] = useState(false);
   const numbersRef = useRef<HTMLElement | null>(null);
   const expertiseRef = useRef<HTMLElement | null>(null);
+  const carouselRef = useRef<HTMLDivElement | null>(null);
+  const carouselAnimationRef = useRef<number | null>(null);
+  const carouselScrollFrameRef = useRef<number | null>(null);
+  const carouselDragRef = useRef({ pointerId: null as number | null, startX: 0, startScrollLeft: 0, moved: false });
+  const carouselWheelTimerRef = useRef<number | null>(null);
+  const carouselResumeTimerRef = useRef<number | null>(null);
+  const suppressCarouselClickRef = useRef(false);
+  const carouselHoveredRef = useRef(false);
+  const carouselInteractingRef = useRef(false);
   const t = copy[language];
   const [heroDescriptionLead, heroDescriptionTail] = t.heroDescription.split("Khánh Đoan");
 
@@ -690,6 +712,84 @@ export default function Home() {
     };
   }, [selectedProject]);
 
+  useEffect(() => {
+    if (activeFilter !== "All" || carouselPaused) return;
+    const intervalId = window.setInterval(() => {
+      setActiveCarouselIndex((current) => current + 1);
+    }, 2000);
+    return () => window.clearInterval(intervalId);
+  }, [activeFilter, carouselPaused]);
+
+  useEffect(() => () => {
+    if (carouselWheelTimerRef.current !== null) window.clearTimeout(carouselWheelTimerRef.current);
+    if (carouselResumeTimerRef.current !== null) window.clearTimeout(carouselResumeTimerRef.current);
+    if (carouselScrollFrameRef.current !== null) window.cancelAnimationFrame(carouselScrollFrameRef.current);
+  }, []);
+
+  useLayoutEffect(() => {
+    if (activeFilter !== "All") return;
+
+    const centerActiveCard = () => {
+      const carousel = carouselRef.current;
+      const activeCard = carousel?.querySelector<HTMLElement>(`[data-carousel-index="${activeCarouselIndex}"]`);
+      if (!carousel || !activeCard) return;
+      const targetLeft = activeCard.offsetLeft - (carousel.clientWidth - activeCard.offsetWidth) / 2;
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const shouldJump = carouselInstant || reducedMotion || (activeCarouselIndex === projects.length && carousel.scrollLeft === 0);
+      const resetLoopPosition = () => {
+        setCarouselInstant(true);
+        setActiveCarouselIndex(projects.length);
+        setFocusedCarouselIndex(projects.length);
+        window.requestAnimationFrame(() => window.requestAnimationFrame(() => setCarouselInstant(false)));
+      };
+
+      if (carouselAnimationRef.current !== null) {
+        window.cancelAnimationFrame(carouselAnimationRef.current);
+        carouselAnimationRef.current = null;
+      }
+
+      if (shouldJump) {
+        carousel.scrollLeft = targetLeft;
+        if (activeCarouselIndex === projects.length * 2) resetLoopPosition();
+        return;
+      }
+
+      const startLeft = carousel.scrollLeft;
+      const distance = targetLeft - startLeft;
+      const startTime = performance.now();
+      const animate = (time: number) => {
+        const progress = Math.min((time - startTime) / 500, 1);
+        const easedProgress = 1 - Math.pow(1 - progress, 3);
+        carousel.scrollLeft = startLeft + distance * easedProgress;
+        if (progress < 1) {
+          carouselAnimationRef.current = window.requestAnimationFrame(animate);
+        } else {
+          carouselAnimationRef.current = null;
+          if (activeCarouselIndex === projects.length * 2) resetLoopPosition();
+        }
+      };
+      carouselAnimationRef.current = window.requestAnimationFrame(animate);
+    };
+
+    const frameId = window.requestAnimationFrame(centerActiveCard);
+    const centerAfterResize = () => {
+      const carousel = carouselRef.current;
+      const activeCard = carousel?.querySelector<HTMLElement>(`[data-carousel-index="${activeCarouselIndex}"]`);
+      if (carousel && activeCard) {
+        carousel.scrollLeft = activeCard.offsetLeft - (carousel.clientWidth - activeCard.offsetWidth) / 2;
+      }
+    };
+    window.addEventListener("resize", centerAfterResize);
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      if (carouselAnimationRef.current !== null) {
+        window.cancelAnimationFrame(carouselAnimationRef.current);
+        carouselAnimationRef.current = null;
+      }
+      window.removeEventListener("resize", centerAfterResize);
+    };
+  }, [activeCarouselIndex, activeFilter, carouselInstant]);
+
   const filteredProjects = useMemo(
     () => projects.filter((project) => activeFilter === "All" || project.category === activeFilter),
     [activeFilter],
@@ -698,6 +798,207 @@ export default function Home() {
   const switchLanguage = (next: Language) => {
     setLanguage(next);
     setMenuOpen(false);
+  };
+
+  const normalizeCarouselLoopPosition = () => {
+    const carousel = carouselRef.current;
+    if (!carousel) return;
+    const firstMiddleCard = carousel.querySelector<HTMLElement>(`[data-carousel-index="${projects.length}"]`);
+    const firstTrailingCard = carousel.querySelector<HTMLElement>(`[data-carousel-index="${projects.length * 2}"]`);
+    const track = carousel.querySelector<HTMLElement>(".project-carousel-track");
+    if (!firstMiddleCard || !firstTrailingCard || !track) return;
+
+    const gap = Number.parseFloat(getComputedStyle(track).gap) || 12;
+    const step = firstMiddleCard.offsetWidth + gap;
+    const cycleWidth = firstTrailingCard.offsetLeft - firstMiddleCard.offsetLeft;
+    const middleStart = firstMiddleCard.offsetLeft - (carousel.clientWidth - firstMiddleCard.offsetWidth) / 2;
+    const trailingStart = firstTrailingCard.offsetLeft - (carousel.clientWidth - firstTrailingCard.offsetWidth) / 2;
+    let shift = 0;
+
+    if (carousel.scrollLeft < middleStart - (step / 2)) shift = cycleWidth;
+    else if (carousel.scrollLeft >= trailingStart - (step / 2)) shift = -cycleWidth;
+
+    if (shift !== 0) {
+      carousel.scrollLeft += shift;
+      if (carouselDragRef.current.pointerId !== null) carouselDragRef.current.startScrollLeft += shift;
+    }
+  };
+
+  const updateCarouselVisualFocus = () => {
+    const carousel = carouselRef.current;
+    if (!carousel) return null;
+    const carouselCenter = carousel.getBoundingClientRect().left + carousel.clientWidth / 2;
+    const cards = [...carousel.querySelectorAll<HTMLElement>("[data-carousel-index]")];
+    const gap = Number.parseFloat(getComputedStyle(carousel.querySelector<HTMLElement>(".project-carousel-track")!).gap) || 12;
+
+    cards.forEach((card) => {
+      const cardRect = card.getBoundingClientRect();
+      const cardCenter = cardRect.left + cardRect.width / 2;
+      const normalizedDistance = Math.abs(cardCenter - carouselCenter) / (card.offsetWidth + gap);
+      const scale = normalizedDistance <= 1
+        ? 1 - (.15 * normalizedDistance)
+        : Math.max(.72, .85 - (.13 * (normalizedDistance - 1)));
+      const opacity = normalizedDistance <= 1
+        ? 1 - (.28 * normalizedDistance)
+        : Math.max(.42, .72 - (.3 * (normalizedDistance - 1)));
+      const saturation = normalizedDistance <= 1
+        ? 1 - (.12 * normalizedDistance)
+        : Math.max(.72, .88 - (.16 * (normalizedDistance - 1)));
+      card.style.setProperty("--carousel-live-scale", scale.toFixed(4));
+      card.style.setProperty("--carousel-live-opacity", opacity.toFixed(4));
+      card.style.setProperty("--carousel-live-saturation", saturation.toFixed(4));
+    });
+
+    const closestCard = cards.reduce<HTMLElement | null>((closest, card) => {
+      if (!closest) return card;
+      const cardCenter = card.getBoundingClientRect().left + card.offsetWidth / 2;
+      const closestCenter = closest.getBoundingClientRect().left + closest.offsetWidth / 2;
+      return Math.abs(cardCenter - carouselCenter) < Math.abs(closestCenter - carouselCenter) ? card : closest;
+    }, null);
+    const nextIndex = Number(closestCard?.dataset.carouselIndex);
+    if (Number.isFinite(nextIndex)) {
+      setFocusedCarouselIndex((current) => current === nextIndex ? current : nextIndex);
+      return nextIndex;
+    }
+    return null;
+  };
+
+  const handleCarouselScroll = () => {
+    if (carouselScrollFrameRef.current !== null) return;
+    carouselScrollFrameRef.current = window.requestAnimationFrame(() => {
+      carouselScrollFrameRef.current = null;
+      if (carouselInteractingRef.current) normalizeCarouselLoopPosition();
+      updateCarouselVisualFocus();
+    });
+  };
+
+  const snapCarouselToClosestCard = () => {
+    const nextIndex = updateCarouselVisualFocus();
+    if (nextIndex !== null) setActiveCarouselIndex(nextIndex);
+  };
+
+  const resumeCarouselAfterInteraction = () => {
+    if (carouselResumeTimerRef.current !== null) window.clearTimeout(carouselResumeTimerRef.current);
+    carouselResumeTimerRef.current = window.setTimeout(() => {
+      if (!carouselHoveredRef.current) setCarouselPaused(false);
+      setCarouselInteracting(false);
+      carouselInteractingRef.current = false;
+    }, 560);
+  };
+
+  const handleCarouselPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    const carousel = carouselRef.current;
+    if (!carousel) return;
+    if (carouselResumeTimerRef.current !== null) window.clearTimeout(carouselResumeTimerRef.current);
+    if (carouselAnimationRef.current !== null) {
+      window.cancelAnimationFrame(carouselAnimationRef.current);
+      carouselAnimationRef.current = null;
+    }
+    setCarouselPaused(true);
+    setCarouselInteracting(true);
+    carouselInteractingRef.current = true;
+    carouselDragRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startScrollLeft: carousel.scrollLeft,
+      moved: false,
+    };
+  };
+
+  const handleCarouselPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const drag = carouselDragRef.current;
+    const carousel = carouselRef.current;
+    if (!carousel || drag.pointerId !== event.pointerId) return;
+    const distance = event.clientX - drag.startX;
+    if (Math.abs(distance) > 4 && !drag.moved) {
+      drag.moved = true;
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
+    if (drag.moved) {
+      event.preventDefault();
+      carousel.scrollLeft = drag.startScrollLeft - distance;
+      normalizeCarouselLoopPosition();
+    }
+  };
+
+  const handleCarouselPointerEnd = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const drag = carouselDragRef.current;
+    if (drag.pointerId !== event.pointerId) return;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+    carouselDragRef.current.pointerId = null;
+    if (drag.moved) {
+      suppressCarouselClickRef.current = true;
+      snapCarouselToClosestCard();
+      window.setTimeout(() => { suppressCarouselClickRef.current = false; }, 0);
+    }
+    resumeCarouselAfterInteraction();
+  };
+
+  const handleCarouselWheel = (event: ReactWheelEvent<HTMLDivElement>) => {
+    if (Math.abs(event.deltaX) < 1) return;
+    if (carouselResumeTimerRef.current !== null) window.clearTimeout(carouselResumeTimerRef.current);
+    setCarouselPaused(true);
+    setCarouselInteracting(true);
+    carouselInteractingRef.current = true;
+    if (carouselWheelTimerRef.current !== null) window.clearTimeout(carouselWheelTimerRef.current);
+    carouselWheelTimerRef.current = window.setTimeout(() => {
+      snapCarouselToClosestCard();
+      resumeCarouselAfterInteraction();
+    }, 140);
+  };
+
+  const renderProjectCard = (project: Project, index: number, key: string, carouselIndex?: number, duplicate = false) => {
+    const isCarouselCard = carouselIndex !== undefined;
+    const distanceFromActive = isCarouselCard ? Math.abs(carouselIndex - focusedCarouselIndex) : 0;
+    const carouselClass = !isCarouselCard
+      ? ""
+      : distanceFromActive === 0
+        ? " carousel-card-active"
+        : distanceFromActive === 1
+          ? " carousel-card-adjacent"
+          : " carousel-card-distant";
+
+    return (
+    <article
+      className={`project-card project-${project.tone}${carouselClass}`}
+      key={key}
+      data-carousel-index={carouselIndex}
+      aria-hidden={duplicate ? true : undefined}
+    >
+      <button
+        className="project-hitbox"
+        type="button"
+        tabIndex={duplicate ? -1 : 0}
+        onFocus={() => {
+          if (isCarouselCard) setActiveCarouselIndex(carouselIndex);
+        }}
+        onClick={() => {
+          if (suppressCarouselClickRef.current) return;
+          if (isCarouselCard) setActiveCarouselIndex(carouselIndex);
+          setSelectedProject(project);
+        }}
+        aria-label={`${t.viewProject}: ${project.title[language]}`}
+        aria-current={isCarouselCard && carouselIndex === focusedCarouselIndex ? "true" : undefined}
+      />
+      <div className="project-visual">
+        <span className="project-number">0{index + 1}</span>
+        <div className="visual-orbit" aria-hidden="true"><i /><i /><i /></div>
+        <strong>{project.metric}</strong>
+        <span className="visual-label">PERFORMANCE / CREATIVE</span>
+      </div>
+      <div className="project-content">
+        <p className="project-eyebrow">{project.eyebrow[language]}</p>
+        <h3>{project.title[language]}</h3>
+        <p>{project.description[language]}</p>
+        <div className="project-meta">
+          <span>{project.role[language]}</span>
+          <span>{project.period[language]}</span>
+        </div>
+        <span className="project-link">{t.viewProject}<ProjectArrowIcon /></span>
+      </div>
+    </article>
+    );
   };
 
   return (
@@ -879,29 +1180,53 @@ export default function Home() {
             })}
           </div>
 
-          <div className="project-grid">
-            {filteredProjects.map((project, index) => (
-              <article className={`project-card project-${project.tone}`} key={project.id}>
-                <button className="project-hitbox" type="button" onClick={() => setSelectedProject(project)} aria-label={`${t.viewProject}: ${project.title[language]}`} />
-                <div className="project-visual">
-                  <span className="project-number">0{index + 1}</span>
-                  <div className="visual-orbit" aria-hidden="true"><i /><i /><i /></div>
-                  <strong>{project.metric}</strong>
-                  <span className="visual-label">PERFORMANCE / CREATIVE</span>
-                </div>
-                <div className="project-content">
-                  <p className="project-eyebrow">{project.eyebrow[language]}</p>
-                  <h3>{project.title[language]}</h3>
-                  <p>{project.description[language]}</p>
-                  <div className="project-meta">
-                    <span>{project.role[language]}</span>
-                    <span>{project.period[language]}</span>
-                  </div>
-                  <span className="project-link">{t.viewProject}<ProjectArrowIcon /></span>
-                </div>
-              </article>
-            ))}
-          </div>
+          {activeFilter === "All" ? (
+            <div
+              className={`project-carousel project-layout-enter${carouselInstant ? " is-resetting" : ""}${carouselInteracting ? " is-interacting" : ""}`}
+              key="project-carousel"
+              ref={carouselRef}
+              onMouseEnter={() => {
+                carouselHoveredRef.current = true;
+                if (carouselResumeTimerRef.current !== null) window.clearTimeout(carouselResumeTimerRef.current);
+                setCarouselPaused(true);
+              }}
+              onMouseLeave={() => {
+                carouselHoveredRef.current = false;
+                if (carouselDragRef.current.pointerId === null) setCarouselPaused(false);
+              }}
+              onPointerDown={handleCarouselPointerDown}
+              onPointerMove={handleCarouselPointerMove}
+              onPointerUp={handleCarouselPointerEnd}
+              onPointerCancel={handleCarouselPointerEnd}
+              onWheel={handleCarouselWheel}
+              onScroll={handleCarouselScroll}
+              onFocusCapture={() => {
+                if (carouselResumeTimerRef.current !== null) window.clearTimeout(carouselResumeTimerRef.current);
+                setCarouselPaused(true);
+              }}
+              onBlurCapture={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget as Node | null) && !carouselHoveredRef.current) {
+                  setCarouselPaused(false);
+                }
+              }}
+            >
+              <div className="project-carousel-track">
+                {[0, 1, 2].map((setIndex) => projects.map((project, index) => (
+                  renderProjectCard(
+                    project,
+                    index,
+                    `carousel-${setIndex}-${project.id}`,
+                    (setIndex * projects.length) + index,
+                    setIndex !== 1,
+                  )
+                )))}
+              </div>
+            </div>
+          ) : (
+            <div className="project-grid project-layout-enter" key={`project-grid-${activeFilter}`}>
+              {filteredProjects.map((project, index) => renderProjectCard(project, index, `grid-${project.id}`))}
+            </div>
+          )}
 
           <p className="confidential-note"><span>ⓘ</span>{t.confidential}</p>
         </div>
