@@ -1862,7 +1862,8 @@ footer {
 @media (max-width: 560px) {
   .wordmark strong { display: none; }
   .hero { padding-top: 118px; }
-  .hero h1 { font-size: 42px; }
+  .hero h1 { font-size: 42px; line-height: 1.08; }
+  .hero h1 em { font-size: 36px; line-height: 1.12; }
   .hero-description { font-size: 15px; }
   .hero-actions { align-items: stretch; flex-direction: row; gap: 12px; }
   .primary-button,
@@ -1894,7 +1895,11 @@ footer {
     min-height: 216px;
     padding: 24px 0;
   }
-  .expertise-row .index, .expertise-row .row-arrow { align-self: center; }
+  .expertise-row .index {
+    align-self: center;
+    justify-self: center;
+  }
+  .expertise-row .row-arrow { align-self: center; }
   .expertise-row h3 { font-size: 22px; line-height: 1.25; }
   .expertise-row p { font-size: 14px; line-height: 1.55; }
   .section-heading h2,
