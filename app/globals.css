@@ -1005,22 +1005,22 @@ a {
   grid-template-columns: 70px minmax(230px, .6fr) 1fr 34px;
   gap: 30px;
   align-items: center;
+  height: 142px;
   min-height: 142px;
   border-bottom: 1px solid var(--line-light);
+  overflow: hidden;
   transition:
     opacity 520ms ease,
     transform 680ms cubic-bezier(.2, .75, .2, 1),
-    padding 200ms ease,
     background 200ms ease;
 }
 
-.expertise.is-visible .expertise-row:nth-child(1) { transition-delay: 170ms, 170ms, 0ms, 0ms; }
-.expertise.is-visible .expertise-row:nth-child(2) { transition-delay: 260ms, 260ms, 0ms, 0ms; }
-.expertise.is-visible .expertise-row:nth-child(3) { transition-delay: 350ms, 350ms, 0ms, 0ms; }
-.expertise.is-visible .expertise-row:nth-child(4) { transition-delay: 440ms, 440ms, 0ms, 0ms; }
+.expertise.is-visible .expertise-row:nth-child(1) { transition-delay: 170ms, 170ms, 0ms; }
+.expertise.is-visible .expertise-row:nth-child(2) { transition-delay: 260ms, 260ms, 0ms; }
+.expertise.is-visible .expertise-row:nth-child(3) { transition-delay: 350ms, 350ms, 0ms; }
+.expertise.is-visible .expertise-row:nth-child(4) { transition-delay: 440ms, 440ms, 0ms; }
 
 .expertise-row:hover {
-  padding-inline: 16px;
   background: rgba(255, 255, 255, 0.45);
   border-radius: 0 0 var(--radius-md) var(--radius-md);
 }
@@ -1824,9 +1824,17 @@ footer {
   .stat { min-height: 145px; border-bottom: 1px solid var(--line-light); }
   .stat:nth-child(odd) { border-left: 1px solid var(--line-light); }
   .section-heading { grid-template-columns: 1fr; gap: 28px; }
-  .expertise-row { grid-template-columns: 45px 1fr 25px; gap: 18px; padding: 30px 0; }
+  .expertise-row {
+    grid-template-columns: 45px minmax(0, 1fr) 25px;
+    gap: 18px;
+    height: 168px;
+    min-height: 168px;
+    padding: 26px 0;
+  }
   .expertise-row p { grid-column: 2 / 4; }
   .expertise-row .row-arrow { grid-column: 3; grid-row: 1; }
+  .expertise-row h3 { font-size: 23px; }
+  .expertise-row p { font-size: 14px; line-height: 1.55; }
   .about { grid-template-columns: 1fr; }
   .about-label { display: grid; grid-template-columns: 1fr 1.5fr; align-items: start; gap: 30px; }
   .portrait-placeholder { width: 100%; margin-top: 0; }
@@ -1853,6 +1861,15 @@ footer {
   .board-grid > div { padding: 12px; }
   .expertise, .about, .contact, .work, .experience { padding-top: 92px; padding-bottom: 92px; }
   .section-heading { margin-bottom: 46px; }
+  .expertise-row {
+    grid-template-columns: 46px minmax(0, 1fr) 24px;
+    gap: 14px;
+    height: 216px;
+    min-height: 216px;
+    padding: 24px 0;
+  }
+  .expertise-row h3 { font-size: 22px; line-height: 1.25; }
+  .expertise-row p { font-size: 14px; line-height: 1.55; }
   .section-heading h2, .about h2, .experience h2 { font-size: 42px; }
   .contact h2 { font-size: 53px; }
   .contact::after {
