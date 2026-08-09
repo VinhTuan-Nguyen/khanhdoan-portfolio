@@ -1607,11 +1607,14 @@ footer {
   transform: translateY(0) scale(1);
 }
 
-.back-to-top span {
-  color: inherit;
-  font-size: inherit;
-  font-weight: inherit;
-  line-height: 1;
+.back-to-top svg {
+  width: 25px;
+  height: 25px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .footer-inner > a:hover,
@@ -1847,7 +1850,7 @@ footer {
 @media (max-width: 560px) {
   .wordmark strong { display: none; }
   .hero { padding-top: 118px; }
-  .hero h1 { font-size: 45px; }
+  .hero h1 { font-size: 42px; }
   .hero-description { font-size: 15px; }
   .hero-actions { align-items: stretch; flex-direction: column; gap: 14px; }
   .primary-button, .text-button { width: 100%; }
@@ -1863,26 +1866,35 @@ footer {
   .section-heading { margin-bottom: 46px; }
   .expertise-row {
     grid-template-columns: 46px minmax(0, 1fr) 24px;
-    gap: 14px;
+    grid-template-rows: auto auto;
+    column-gap: 14px;
+    row-gap: 10px;
+    align-content: center;
+    align-items: start;
     height: 216px;
     min-height: 216px;
     padding: 24px 0;
   }
+  .expertise-row .index, .expertise-row .row-arrow { align-self: center; }
   .expertise-row h3 { font-size: 22px; line-height: 1.25; }
   .expertise-row p { font-size: 14px; line-height: 1.55; }
-  .section-heading h2, .about h2, .experience h2 { font-size: 42px; }
-  .contact h2 { font-size: 53px; }
+  .section-heading h2,
+  .about h2,
+  .experience h2,
+  .contact h2,
+  .modal-content h2 { font-size: 34px; }
+  .project-content h3,
+  .experience-body h3 { font-size: 22px; }
   .contact::after {
     left: 0;
-    bottom: -.08em;
-    font-size: clamp(170px, 58vw, 240px);
+    bottom: 0;
+    font-size: clamp(85px, 29vw, 120px);
     line-height: .8;
     white-space: nowrap;
   }
   .project-grid { grid-template-columns: 1fr; }
   .project-visual { height: 230px; }
   .project-content { min-height: 310px; padding: 25px; }
-  .project-content h3 { font-size: 30px; }
   .about-label { grid-template-columns: 1fr; }
   .portrait-placeholder { max-width: none; }
   .principles { grid-template-columns: 1fr; }

@@ -972,7 +972,9 @@ export default function Home() {
             aria-hidden={!showBackToTop}
             tabIndex={showBackToTop ? 0 : -1}
           >
-            <span aria-hidden="true">↑</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M12 19V5M6.5 10.5 12 5l5.5 5.5" />
+            </svg>
           </a>
         </div>
       </footer>
