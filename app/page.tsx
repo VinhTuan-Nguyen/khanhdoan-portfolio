@@ -90,6 +90,7 @@ const copy = {
     principles: ["Data-informed", "Ownership", "Giao tiếp rõ ràng", "Continuous testing"],
     experienceKicker: "KINH NGHIỆM",
     experienceTitle: "Hành trình từ sáng tạo đến hiệu suất",
+    experienceScrollLabel: "Cuộn để theo dõi hành trình",
     experiences: [
       {
         start: "04/2025",
@@ -195,6 +196,7 @@ const copy = {
     principles: ["Data-informed", "Ownership", "Clear communication", "Continuous testing"],
     experienceKicker: "EXPERIENCE",
     experienceTitle: "A journey from creativity to performance",
+    experienceScrollLabel: "Scroll to trace the journey",
     experiences: [
       {
         start: "04/2025",
@@ -491,6 +493,47 @@ function LanaLogo() {
   );
 }
 
+function ExperienceMilestoneLogo({ company }: { company: string }) {
+  if (company.startsWith("LANA")) return <LanaLogo />;
+
+  const label = company.startsWith("Lạc")
+    ? "LẠC"
+    : company === "Freelance"
+      ? "Freelance"
+      : "S4S";
+
+  return <span className="milestone-monogram" aria-hidden="true">{label}</span>;
+}
+
+function getRoadmapMilestoneThresholds(path: SVGPathElement) {
+  const totalLength = path.getTotalLength();
+  const milestonePoints = [
+    { x: 64, y: 125 },
+    { x: 36, y: 375 },
+    { x: 64, y: 625 },
+    { x: 36, y: 875 },
+  ];
+  const samples = 1200;
+
+  return milestonePoints.map((target) => {
+    let closestLength = 0;
+    let closestDistance = Number.POSITIVE_INFINITY;
+
+    for (let index = 0; index <= samples; index += 1) {
+      const length = totalLength * (index / samples);
+      const point = path.getPointAtLength(length);
+      const distance = Math.hypot(point.x - target.x, point.y - target.y);
+
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestLength = length;
+      }
+    }
+
+    return closestLength / totalLength;
+  });
+}
+
 function DownloadIcon() {
   return (
     <svg className="action-icon" viewBox="0 0 18 18" fill="none" aria-hidden="true" focusable="false">
@@ -584,8 +627,11 @@ export default function Home() {
   const [numbersVisible, setNumbersVisible] = useState(false);
   const [animatedStats, setAnimatedStats] = useState<number[]>(statTargets.map(() => 0));
   const [expertiseVisible, setExpertiseVisible] = useState(false);
+  const [activeExperienceIndex, setActiveExperienceIndex] = useState(-1);
   const numbersRef = useRef<HTMLElement | null>(null);
   const expertiseRef = useRef<HTMLElement | null>(null);
+  const experienceRoadmapRef = useRef<HTMLDivElement | null>(null);
+  const activeExperienceIndexRef = useRef(-1);
   const carouselRef = useRef<HTMLDivElement | null>(null);
   const carouselAnimationRef = useRef<number | null>(null);
   const carouselScrollFrameRef = useRef<number | null>(null);
@@ -596,6 +642,7 @@ export default function Home() {
   const carouselHoveredRef = useRef(false);
   const carouselInteractingRef = useRef(false);
   const t = copy[language];
+  const roadmapExperiences = t.experiences;
   const [heroDescriptionLead, heroDescriptionTail] = t.heroDescription.split("Khánh Đoan");
 
   useEffect(() => {
@@ -641,6 +688,95 @@ export default function Home() {
 
     const frameId = window.requestAnimationFrame(() => setLanguage(saved));
     return () => window.cancelAnimationFrame(frameId);
+  }, []);
+
+  useEffect(() => {
+    const roadmap = experienceRoadmapRef.current;
+    if (!roadmap) return;
+
+    let frameId = 0;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const progressPath = roadmap.querySelector<SVGPathElement>(".roadmap-path-progress");
+    const pathLength = progressPath?.getTotalLength() ?? 1;
+    const thresholds = progressPath
+      ? getRoadmapMilestoneThresholds(progressPath)
+      : [0.125, 0.375, 0.625, 0.875];
+
+    if (progressPath) {
+      progressPath.style.strokeDasharray = `${pathLength}`;
+      progressPath.style.strokeDashoffset = `${pathLength}`;
+    }
+
+    const updateRoadmap = () => {
+      window.cancelAnimationFrame(frameId);
+      frameId = window.requestAnimationFrame(() => {
+        if (reducedMotion.matches) {
+          roadmap.style.setProperty("--roadmap-progress", "1");
+          if (progressPath) progressPath.style.strokeDashoffset = "0";
+          activeExperienceIndexRef.current = thresholds.length - 1;
+          setActiveExperienceIndex(thresholds.length - 1);
+          return;
+        }
+
+        const rect = roadmap.getBoundingClientRect();
+        const revealLine = window.innerHeight * 0.72;
+        const finishLine = window.innerHeight * 0.28;
+        const travelDistance = Math.max(rect.height + revealLine - finishLine, 1);
+        const progress = Math.min(Math.max((revealLine - rect.top) / travelDistance, 0), 1);
+        const nextActiveIndex = thresholds.reduce(
+          (active, threshold, index) => progress >= threshold ? index : active,
+          -1,
+        );
+
+        roadmap.style.setProperty("--roadmap-progress", progress.toFixed(4));
+        if (progressPath) {
+          progressPath.style.strokeDashoffset = `${pathLength * (1 - progress)}`;
+        }
+
+        const viewportHeight = window.innerHeight;
+        const fadeDistance = Math.max(viewportHeight * 0.42, 280);
+        const steps = roadmap.querySelectorAll<HTMLElement>(".roadmap-step");
+
+        steps.forEach((step, index) => {
+          const card = step.querySelector<HTMLElement>(".experience-card");
+          const cardTop = card?.getBoundingClientRect().top ?? step.getBoundingClientRect().top;
+          const visibility = Math.min(Math.max((viewportHeight - cardTop) / fadeDistance, 0), 1);
+          const isCurrent = index === nextActiveIndex;
+          const isPast = index < nextActiveIndex;
+          const opacity = isCurrent ? 1 : isPast ? 0.72 : 0.08 + visibility * 0.82;
+          const scale = isCurrent ? 1.015 : isPast ? 0.985 : 0.94 + visibility * 0.055;
+          const shift = isCurrent || isPast ? 0 : (1 - visibility) * 42;
+          const milestoneOpacity = index <= nextActiveIndex ? 1 : 0.18 + visibility * 0.58;
+          const milestoneScale = index <= nextActiveIndex ? 1 : 0.72 + visibility * 0.22;
+
+          step.style.setProperty("--step-opacity", opacity.toFixed(3));
+          step.style.setProperty("--step-scale", scale.toFixed(3));
+          step.style.setProperty("--step-shift", `${shift.toFixed(2)}px`);
+          step.style.setProperty("--milestone-opacity", milestoneOpacity.toFixed(3));
+          step.style.setProperty("--milestone-scale", milestoneScale.toFixed(3));
+        });
+
+        if (nextActiveIndex !== activeExperienceIndexRef.current) {
+          activeExperienceIndexRef.current = nextActiveIndex;
+          setActiveExperienceIndex(nextActiveIndex);
+        }
+      });
+    };
+
+    const resizeObserver = new ResizeObserver(updateRoadmap);
+    resizeObserver.observe(roadmap);
+    updateRoadmap();
+    window.addEventListener("scroll", updateRoadmap, { passive: true });
+    window.addEventListener("resize", updateRoadmap);
+    reducedMotion.addEventListener("change", updateRoadmap);
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      resizeObserver.disconnect();
+      window.removeEventListener("scroll", updateRoadmap);
+      window.removeEventListener("resize", updateRoadmap);
+      reducedMotion.removeEventListener("change", updateRoadmap);
+    };
   }, []);
 
   useEffect(() => {
@@ -1312,14 +1448,60 @@ export default function Home() {
       </section>
 
       <section className="experience" id="experience">
-        <div className="section-shell experience-layout">
+        <div className="section-shell experience-intro">
           <div>
             <p className="kicker">{t.experienceKicker}</p>
             <h2>{t.experienceTitle}</h2>
+            <div className="roadmap-scroll-cue" aria-hidden="true">
+              <span>{t.experienceScrollLabel}</span>
+              <i><ArrowDownIcon /></i>
+            </div>
           </div>
-          <div className="experience-list">
-            {t.experiences.map((experience, index) => (
-              <article className="experience-card" key={`${experience.start}-${experience.role}`}>
+        </div>
+
+        <div
+          className="section-shell experience-roadmap"
+          ref={experienceRoadmapRef}
+          role="list"
+          aria-label={t.experienceTitle}
+        >
+          <svg className="roadmap-line" viewBox="0 0 100 1000" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="roadmap-gradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stopColor="#84b3ce" />
+                <stop offset="0.48" stopColor="#7da8bc" />
+                <stop offset="1" stopColor="#16587b" />
+              </linearGradient>
+            </defs>
+            <path
+              className="roadmap-path roadmap-path-progress"
+              d="M50 0 C50 60 64 70 64 125 C64 220 36 280 36 375 C36 470 64 530 64 625 C64 720 36 780 36 875 C36 940 50 965 50 1000"
+              pathLength="1"
+            />
+          </svg>
+          {roadmapExperiences.map((experience, index) => {
+            const isRevealed = index <= activeExperienceIndex;
+            const isActive = index === activeExperienceIndex;
+            const brandClass = experience.company.startsWith("LANA")
+              ? "lana"
+              : experience.company.startsWith("Lạc")
+                ? "lac"
+                : experience.company === "Freelance"
+                  ? "freelance"
+                  : "s4s";
+
+            return (
+              <div
+                className={`roadmap-step roadmap-step-${index % 2 === 0 ? "left" : "right"}${isRevealed ? " is-revealed" : ""}${isActive ? " is-active" : ""}`}
+                key={`${experience.start}-${experience.role}`}
+                role="listitem"
+              >
+                <div className={`roadmap-milestone milestone-${brandClass}`} aria-hidden="true">
+                  <span className="milestone-ring" />
+                  <span className="milestone-logo"><ExperienceMilestoneLogo company={experience.company} /></span>
+                </div>
+
+                <article className="experience-card" aria-current={isActive ? "step" : undefined}>
                 <div className="experience-date">
                   <span>{experience.start}</span>
                   <i>→</i>
@@ -1328,7 +1510,6 @@ export default function Home() {
                 <div className="experience-body">
                   <div>
                     <p className="company-name">
-                      {index === 0 ? <LanaLogo /> : <span className="experience-mark">{String(index + 1).padStart(2, "0")}</span>}
                       {experience.company}
                     </p>
                     <h3>{experience.role}</h3>
@@ -1339,8 +1520,9 @@ export default function Home() {
                   </div>
                 </div>
               </article>
-            ))}
-          </div>
+              </div>
+            );
+          })}
         </div>
       </section>
 
