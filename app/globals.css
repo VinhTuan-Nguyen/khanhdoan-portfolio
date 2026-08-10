@@ -1154,10 +1154,6 @@ a {
   transition: none;
 }
 
-.project-carousel.is-resetting .project-card {
-  transition: none;
-}
-
 .project-carousel .carousel-card-adjacent {
   --carousel-live-scale: .85;
   --carousel-live-opacity: .72;
@@ -1472,6 +1468,12 @@ a {
 .experience .kicker { color: var(--ink); }
 .experience h2 { max-width: 500px; }
 
+.experience-list {
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+}
+
 .experience-card {
   padding: 0 24px 24px;
   background: rgba(255, 255, 255, .3);
@@ -1522,6 +1524,20 @@ a {
   stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+.experience-mark {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  place-items: center;
+  border: 1px solid var(--line-light);
+  border-radius: 7px;
+  color: var(--ink);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 9px;
+  font-weight: 700;
 }
 
 .experience-body h3 {

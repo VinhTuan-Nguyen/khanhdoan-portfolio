@@ -89,13 +89,41 @@ const copy = {
       "Làm việc tại agency giúp tôi tiếp xúc với nhiều thương hiệu, ngành hàng và mục tiêu khác nhau. Tôi có thể tham gia từ ý tưởng, content, design và planning đến triển khai, theo dõi và tối ưu quảng cáo. Performance Ads là năng lực chuyên sâu nhất của tôi: đọc dữ liệu, tìm nguyên nhân, thử nghiệm có hệ thống và biến insight thành hành động.",
     principles: ["Data-informed", "Ownership", "Giao tiếp rõ ràng", "Continuous testing"],
     experienceKicker: "KINH NGHIỆM",
-    experienceTitle: "Nơi dữ liệu gặp quyết định.",
-    current: "Hiện tại",
-    role: "OPTIMIZER (PERFORMANCE MARKETING)",
-    company: "LANA",
-    experienceText:
-      "Quản lý và tối ưu paid media trên Meta, TikTok, Google và YouTube; phụ trách hơn 600 triệu đồng ngân sách mỗi tháng. Theo dõi KPI, phân bổ ngân sách, đánh giá creative, phối hợp cùng account, content và design, đồng thời lập báo cáo kèm khuyến nghị hành động.",
-    experiencePoints: ["Media planning & optimization", "Budget allocation", "Creative performance", "Actionable reporting"],
+    experienceTitle: "Hành trình từ sáng tạo đến hiệu suất",
+    experiences: [
+      {
+        start: "04/2025",
+        end: "Hiện tại",
+        company: "LANA Digital",
+        role: "Optimizer & Account Executive",
+        text: "Lập kế hoạch, triển khai và tối ưu quảng cáo cho nhiều thương hiệu trên Meta, Google, YouTube và TikTok, với ngân sách quản lý hơn 600 triệu đồng mỗi tháng. Bên cạnh tối ưu hiệu suất, mình còn tiếp nhận brief, làm rõ mục tiêu, đề xuất media plan, điều phối các bộ phận và báo cáo kết quả cho khách hàng.",
+        tags: ["Paid Media", "Budget & Scaling", "A/B Testing", "Client Coordination"],
+      },
+      {
+        start: "02/2025",
+        end: "04/2025",
+        company: "Lạc’s Beauty Center",
+        role: "Marketing Executive",
+        text: "Nghiên cứu thị trường, xây dựng kế hoạch khuyến mãi và sản xuất nội dung cho Facebook, TikTok. Công việc bao gồm viết nội dung, thiết kế, quay dựng video, đồng thời quản lý gian hàng Shopee, xử lý đơn hàng và hỗ trợ khách hàng.",
+        tags: ["Campaign Planning", "Content & Design", "Video Production", "E-commerce"],
+      },
+      {
+        start: "08/2023",
+        end: "Hiện tại",
+        company: "Freelance",
+        role: "Digital Marketer & Graphic Designer",
+        text: "Thực hiện các dự án marketing tự do, từ lập kế hoạch và sản xuất nội dung đến thiết kế banner, poster và ấn phẩm truyền thông. Bên cạnh đó, mình còn lên kế hoạch và triển khai quảng cáo Facebook theo mục tiêu của từng dự án.",
+        tags: ["Content Planning", "Graphic Design", "Facebook Ads", "Freelance Projects"],
+      },
+      {
+        start: "05/2023",
+        end: "08/2023",
+        company: "Công ty Cổ phần Đầu tư S4S",
+        role: "Marketing Intern",
+        text: "Lên kế hoạch, sản xuất và quản lý nội dung trên mạng xã hội nhằm tăng tương tác và nhận diện thương hiệu. Đồng thời thiết kế banner, bài đăng và một số hạng mục nhận diện phù hợp với mục tiêu truyền thông.",
+        tags: ["Content Management", "Social Media", "Graphic Design", "Brand Identity"],
+      },
+    ],
     contactKicker: "SẴN SÀNG CHO CƠ HỘI MỚI",
     contactTitle: "Cùng tạo ra kết quả tốt hơn.",
     contactText:
@@ -166,13 +194,41 @@ const copy = {
       "Working in an agency environment has exposed me to different brands, industries, and business objectives. I can contribute from ideation, content, design, and planning to campaign execution, monitoring, and optimization. Performance Ads is my strongest expertise: reading data, identifying causes, testing systematically, and turning insights into action.",
     principles: ["Data-informed", "Ownership", "Clear communication", "Continuous testing"],
     experienceKicker: "EXPERIENCE",
-    experienceTitle: "Where data meets decisions.",
-    current: "Present",
-    role: "OPTIMIZER (PERFORMANCE MARKETING)",
-    company: "LANA",
-    experienceText:
-      "Managing and optimizing paid media across Meta, TikTok, Google, and YouTube, with more than USD 23,000 in monthly spend. Monitoring KPIs, reallocating budgets, evaluating creatives, collaborating with account, content, and design teams, and delivering reports with actionable recommendations.",
-    experiencePoints: ["Media planning & optimization", "Budget allocation", "Creative performance", "Actionable reporting"],
+    experienceTitle: "A journey from creativity to performance",
+    experiences: [
+      {
+        start: "04/2025",
+        end: "Present",
+        company: "LANA Digital",
+        role: "Optimizer & Account Executive",
+        text: "Planning, executing, and optimizing paid campaigns for multiple brands across Meta, Google, YouTube, and TikTok, with more than VND 600 million in monthly media spend. Alongside performance optimization, I handle client briefs, clarify objectives, propose media plans, coordinate internal teams, and deliver campaign reports.",
+        tags: ["Paid Media", "Budget & Scaling", "A/B Testing", "Client Coordination"],
+      },
+      {
+        start: "02/2025",
+        end: "04/2025",
+        company: "Lạc’s Beauty Center",
+        role: "Marketing Executive",
+        text: "Conducted market research, developed promotional plans, and produced content for Facebook and TikTok. Responsibilities included copywriting, design, video production, Shopee store management, order processing, and customer support.",
+        tags: ["Campaign Planning", "Content & Design", "Video Production", "E-commerce"],
+      },
+      {
+        start: "08/2023",
+        end: "Present",
+        company: "Freelance",
+        role: "Digital Marketer & Graphic Designer",
+        text: "Working on freelance marketing projects across content planning, content production, and visual design, including banners, posters, and social media assets. I also plan and manage Facebook advertising campaigns based on each project’s objectives.",
+        tags: ["Content Planning", "Graphic Design", "Facebook Ads", "Freelance Projects"],
+      },
+      {
+        start: "05/2023",
+        end: "08/2023",
+        company: "Công ty Cổ phần Đầu tư S4S",
+        role: "Marketing Intern",
+        text: "Planned, produced, and managed social media content to improve engagement and brand awareness. I also designed banners, social posts, and selected brand identity materials aligned with communication goals.",
+        tags: ["Content Management", "Social Media", "Graphic Design", "Brand Identity"],
+      },
+    ],
     contactKicker: "OPEN TO NEW OPPORTUNITIES",
     contactTitle: "Let’s create better results together.",
     contactText:
@@ -519,7 +575,6 @@ export default function Home() {
   const [activeFilter, setActiveFilter] = useState<Category>("All");
   const [activeCarouselIndex, setActiveCarouselIndex] = useState(projects.length);
   const [focusedCarouselIndex, setFocusedCarouselIndex] = useState(projects.length);
-  const [carouselInstant, setCarouselInstant] = useState(false);
   const [carouselPaused, setCarouselPaused] = useState(false);
   const [carouselInteracting, setCarouselInteracting] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -735,12 +790,16 @@ export default function Home() {
       if (!carousel || !activeCard) return;
       const targetLeft = activeCard.offsetLeft - (carousel.clientWidth - activeCard.offsetWidth) / 2;
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const shouldJump = carouselInstant || reducedMotion || (activeCarouselIndex === projects.length && carousel.scrollLeft === 0);
+      const shouldJump = reducedMotion || (activeCarouselIndex === projects.length && carousel.scrollLeft === 0);
       const resetLoopPosition = () => {
-        setCarouselInstant(true);
+        const firstMiddleCard = carousel.querySelector<HTMLElement>(`[data-carousel-index="${projects.length}"]`);
+        const firstTrailingCard = carousel.querySelector<HTMLElement>(`[data-carousel-index="${projects.length * 2}"]`);
+        if (firstMiddleCard && firstTrailingCard) {
+          carousel.scrollLeft -= firstTrailingCard.offsetLeft - firstMiddleCard.offsetLeft;
+          updateCarouselVisualFocus();
+        }
         setActiveCarouselIndex(projects.length);
         setFocusedCarouselIndex(projects.length);
-        window.requestAnimationFrame(() => window.requestAnimationFrame(() => setCarouselInstant(false)));
       };
 
       if (carouselAnimationRef.current !== null) {
@@ -750,6 +809,7 @@ export default function Home() {
 
       if (shouldJump) {
         carousel.scrollLeft = targetLeft;
+        updateCarouselVisualFocus();
         if (activeCarouselIndex === projects.length * 2) resetLoopPosition();
         return;
       }
@@ -788,7 +848,7 @@ export default function Home() {
       }
       window.removeEventListener("resize", centerAfterResize);
     };
-  }, [activeCarouselIndex, activeFilter, carouselInstant]);
+  }, [activeCarouselIndex, activeFilter]);
 
   const filteredProjects = useMemo(
     () => projects.filter((project) => activeFilter === "All" || project.category === activeFilter),
@@ -1182,7 +1242,7 @@ export default function Home() {
 
           {activeFilter === "All" ? (
             <div
-              className={`project-carousel project-layout-enter${carouselInstant ? " is-resetting" : ""}${carouselInteracting ? " is-interacting" : ""}`}
+              className={`project-carousel project-layout-enter${carouselInteracting ? " is-interacting" : ""}`}
               key="project-carousel"
               ref={carouselRef}
               onMouseEnter={() => {
@@ -1257,19 +1317,30 @@ export default function Home() {
             <p className="kicker">{t.experienceKicker}</p>
             <h2>{t.experienceTitle}</h2>
           </div>
-          <article className="experience-card">
-            <div className="experience-date"><span>[MM/YYYY]</span><i>→</i><span>{t.current}</span></div>
-            <div className="experience-body">
-              <div>
-                <p className="company-name"><LanaLogo />{t.company}</p>
-                <h3>{t.role}</h3>
-              </div>
-              <p>{t.experienceText}</p>
-              <div className="experience-tags">
-                {t.experiencePoints.map((item) => <span key={item}>{item}</span>)}
-              </div>
-            </div>
-          </article>
+          <div className="experience-list">
+            {t.experiences.map((experience, index) => (
+              <article className="experience-card" key={`${experience.start}-${experience.role}`}>
+                <div className="experience-date">
+                  <span>{experience.start}</span>
+                  <i>→</i>
+                  <span>{experience.end}</span>
+                </div>
+                <div className="experience-body">
+                  <div>
+                    <p className="company-name">
+                      {index === 0 ? <LanaLogo /> : <span className="experience-mark">{String(index + 1).padStart(2, "0")}</span>}
+                      {experience.company}
+                    </p>
+                    <h3>{experience.role}</h3>
+                  </div>
+                  <p>{experience.text}</p>
+                  <div className="experience-tags">
+                    {experience.tags.map((item) => <span key={item}>{item}</span>)}
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
