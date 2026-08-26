@@ -104,8 +104,8 @@ export function getCaseStudiesForRender({ preview }: { preview: boolean }) {
   });
 
   const publishedFlagships = published.filter((item) => item.presentationTier === "flagship");
-  if (publishedFlagships.length > 0 && (publishedFlagships.length < 4 || publishedFlagships.length > 6)) {
-    throw new Error("A published portfolio must contain between four and six flagship cases.");
+  if (publishedFlagships.length > 6) {
+    throw new Error("A published portfolio cannot contain more than six flagship cases.");
   }
 
   return published;

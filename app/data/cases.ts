@@ -207,8 +207,8 @@ export const caseStudies: CaseStudy[] = [
       en: "24,762 conversations · 725 purchases · 5.35 ROAS",
     },
     roles: {
-      vi: "Tối ưu Meta Ads và theo dõi doanh thu sau hội thoại",
-      en: "Meta Ads optimization and post-conversation revenue tracking",
+      vi: "Trực tiếp vận hành Meta Ads, phát triển creative và theo dõi doanh thu sau hội thoại",
+      en: "Hands-on Meta Ads execution, creative development, and post-conversation revenue tracking",
     },
     roleTags: [
       "Meta Ads",
@@ -219,7 +219,7 @@ export const caseStudies: CaseStudy[] = [
       vi: "6 tháng", en: "6 months"
     },
     collaborationDuration: {
-      vi: "Khoảng 20 tháng", en: "Approximately 20 months"
+      vi: "20 tháng", en: "20 months"
     },
     platforms: [
       "Meta"
@@ -228,12 +228,12 @@ export const caseStudies: CaseStudy[] = [
       {
         label: {
           vi: "Lượt mua", en: "Purchases"
-        }, value: "725", verified: false
+        }, value: "725", verified: true
       },
       {
         label: {
           vi: "ROAS", en: "ROAS"
-        }, value: "5.35", verified: false
+        }, value: "5.35", verified: true
       },
     ],
     detail: {
@@ -250,8 +250,8 @@ export const caseStudies: CaseStudy[] = [
         en: "VND 73.0M in spend generated 24,762 conversations at approximately VND 2,949 each. The account recorded 725 purchases, VND 390.7M in revenue, a 5.35 ROAS, and a 5.14% CTR.",
       },
       accountScope: {
-        vi: "Tiếp nhận yêu cầu, phối hợp nội dung và theo dõi chất lượng tin nhắn, kết quả mua hàng; tổng hợp báo cáo và đề xuất điều chỉnh theo nhu cầu thị trường. Ngân sách quảng cáo khoảng 10–15 triệu đồng mỗi tháng.",
-        en: "Handled client requirements, coordinated content, monitored message quality and purchases, and translated results into reporting and market-led recommendations. Monthly media spend was approximately VND 10–15M.",
+        vi: "Trực tiếp vận hành Meta Ads và phát triển creative; tiếp nhận yêu cầu, theo dõi chất lượng tin nhắn và kết quả mua hàng; tổng hợp báo cáo và đề xuất điều chỉnh theo nhu cầu thị trường. Ngân sách quảng cáo khoảng 10–15 triệu đồng mỗi tháng.",
+        en: "Handled Meta Ads execution and creative development directly; managed client requirements, monitored message quality and purchases, and translated results into reporting and market-led recommendations. Monthly media spend was approximately VND 10–15M.",
       },
       insight: {
         vi: "Đánh giá lead bằng đơn hàng và doanh thu giúp tránh tối ưu cho hội thoại rẻ nhưng kém giá trị.",
@@ -259,9 +259,10 @@ export const caseStudies: CaseStudy[] = [
       },
     },
     coverVariant: "performance-analysis",
+    coverImage: "/work/03-water-tanks-messages-to-sales/cover.webp",
     assets: [],
     confidential: true,
-    dataStatus: needsVerification,
+    dataStatus: "approved",
   },
   {
     id: 4,
