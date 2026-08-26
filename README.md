@@ -71,10 +71,18 @@ https://<username>.github.io/<repository-name>/
 
 ```text
 app/
-  data/projects.ts     # Type và dữ liệu project
-  globals.css          # Styling toàn site
-  layout.tsx           # Metadata và root layout
-  page.tsx             # Trang portfolio và interaction
+  components/
+    layout/             # Header và Footer
+    projects/           # Carousel, card và modal project
+    sections/           # Các section của landing page
+    ui/                 # Icon và custom cursor
+  data/
+    content.ts          # Nội dung giao diện VI/EN
+    projects.ts         # Type và dữ liệu project
+  hooks/                # Navigation, stats, roadmap và carousel logic
+  globals.css           # Styling toàn site
+  layout.tsx            # Metadata và root layout
+  page.tsx              # Ghép các section thành trang portfolio
 
 public/
   og-v2.png            # Social preview đang được sử dụng
