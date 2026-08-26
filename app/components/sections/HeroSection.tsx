@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 import type { Language, PortfolioContent } from "../../data/content";
 import { ArrowDownIcon, ArrowDownRightIcon, DownloadIcon } from "../ui/Icons";
 
-function AnimatedSpend({ language }: { language: Language }) {
-  const target = language === "vi" ? 600 : 23;
+function AnimatedSpend() {
+  const target = 600;
   const [value, setValue] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -38,8 +38,8 @@ function AnimatedSpend({ language }: { language: Language }) {
     return () => window.cancelAnimationFrame(frameId);
   }, [target]);
 
-  const formattedValue = language === "vi" ? `${value}M` : `$${value}K`;
-  const accessibleValue = language === "vi" ? "600M+" : "$23K+";
+  const formattedValue = `${value}M`;
+  const accessibleValue = "VND 600M+";
 
   return (
     <strong className={isVisible ? "board-spend is-visible" : "board-spend"} aria-label={accessibleValue}>
@@ -82,7 +82,7 @@ export function HeroSection({ content, language }: HeroSectionProps) {
             </div>
             <div className="board-main">
               <p>{content.monthlySpend}</p>
-              <AnimatedSpend key={language} language={language} />
+              <AnimatedSpend key={language} />
               <span className="board-currency">{content.monthlySpendCurrency}</span>
             </div>
             <div className="mini-chart" aria-hidden="true">

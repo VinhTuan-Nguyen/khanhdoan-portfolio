@@ -3,12 +3,9 @@
 import type { Language, PortfolioContent } from "../../data/content";
 import { placeStatTooltip, useAnimatedStats } from "../../hooks/useAnimatedStats";
 
-function formatStatValue(index: number, value: number, language: Language) {
+function formatStatValue(index: number, value: number) {
   if (index === 0) return `${value}+`;
-  if (index === 1) {
-    if (language === "en") return `$${Math.round((value / 600) * 23)}K+`;
-    return `${value}M+`;
-  }
+  if (index === 1) return `${value}M+`;
   if (index === 2) return value.toString().padStart(2, "0");
   return `${value}°`;
 }
@@ -33,7 +30,7 @@ export function NumbersSection({ content, language }: NumbersSectionProps) {
             onFocusCapture={(event) => placeStatTooltip(event.currentTarget)}
           >
             <strong aria-hidden="true">
-              <span>{formatStatValue(index, values[index], language)}</span>
+              <span>{formatStatValue(index, values[index])}</span>
             </strong>
             <span>{label}</span>
             <button

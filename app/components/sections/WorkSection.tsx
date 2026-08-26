@@ -2,40 +2,38 @@
 
 import { useCallback, useMemo, useState } from "react";
 
-import { categoryMap, type Category, type Language, type PortfolioContent } from "../../data/content";
-import { projects, type Project } from "../../data/projects";
-import { useProjectCarousel } from "../../hooks/useProjectCarousel";
-import { ProjectCard } from "../projects/ProjectCard";
-import { ProjectCarousel } from "../projects/ProjectCarousel";
-import { ProjectModal } from "../projects/ProjectModal";
+import type { Language, PortfolioContent } from "../../data/content";
+import type { CaseStudy } from "../../data/types";
+import { AdditionalEvidence } from "../cases/AdditionalEvidence";
+import { CaseCard } from "../cases/CaseCard";
+import { CaseDetailModal } from "../cases/CaseDetailModal";
 
 type WorkSectionProps = {
+  caseStudies: CaseStudy[];
   content: PortfolioContent;
   language: Language;
+  previewMode: boolean;
 };
 
-export function WorkSection({ content, language }: WorkSectionProps) {
-  const [activeFilter, setActiveFilter] = useState<Category>("All");
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const carousel = useProjectCarousel({
-    enabled: activeFilter === "All",
-    itemCount: projects.length,
-  });
-  const filteredProjects = useMemo(
-    () => projects.filter((project) => activeFilter === "All" || project.category === activeFilter),
-    [activeFilter],
+export function WorkSection({ caseStudies, content, language, previewMode }: WorkSectionProps) {
+  const [selectedCase, setSelectedCase] = useState<CaseStudy | null>(null);
+  const flagshipCases = useMemo(
+    () => caseStudies
+      .filter((item) => item.presentationTier === "flagship")
+      .sort((left, right) => (left.featuredRank ?? 99) - (right.featuredRank ?? 99)),
+    [caseStudies],
   );
-
-  const selectProject = (project: Project, carouselIndex?: number) => {
-    if (carousel.suppressClickRef.current) return;
-    if (carouselIndex !== undefined) carousel.setActiveIndex(carouselIndex);
-    setSelectedProject(project);
-  };
-  const closeProject = useCallback(() => setSelectedProject(null), []);
+  const evidenceCases = useMemo(
+    () => caseStudies
+      .filter((item) => item.presentationTier === "evidence-only")
+      .sort((left, right) => left.id - right.id),
+    [caseStudies],
+  );
+  const closeCase = useCallback(() => setSelectedCase(null), []);
 
   return (
     <>
-      <section className="work" id="work">
+      <section className="work case-studies" id="work">
         <div className="section-shell">
           <div className="section-heading work-heading">
             <div>
@@ -45,54 +43,40 @@ export function WorkSection({ content, language }: WorkSectionProps) {
             <p>{content.workIntro}</p>
           </div>
 
-          <div className="filters" role="group" aria-label="Project filters">
-            {content.filters.map((label) => {
-              const value = categoryMap[label];
-              return (
-                <button
-                  type="button"
-                  key={label}
-                  className={activeFilter === value ? "active" : ""}
-                  onClick={() => setActiveFilter(value)}
-                >
-                  {label}
-                </button>
-              );
-            })}
-          </div>
+          {previewMode && <p className="case-preview-notice"><span>PREVIEW</span>{content.previewNotice}</p>}
 
-          {activeFilter === "All" ? (
-            <ProjectCarousel
-              content={content}
-              controller={carousel}
-              language={language}
-              onSelect={selectProject}
-            />
-          ) : (
-            <div className="project-grid project-layout-enter" key={`project-grid-${activeFilter}`}>
-              {filteredProjects.map((project, index) => (
-                <ProjectCard
-                  key={`grid-${project.id}`}
-                  project={project}
-                  displayIndex={index}
+          {flagshipCases.length > 0 ? (
+            <div className="selected-case-grid">
+              {flagshipCases.map((caseStudy) => (
+                <CaseCard
+                  caseStudy={caseStudy}
+                  content={content}
+                  key={caseStudy.id}
                   language={language}
-                  viewProjectLabel={content.viewProject}
-                  onSelect={selectProject}
+                  onSelect={setSelectedCase}
+                  previewMode={previewMode}
                 />
               ))}
             </div>
+          ) : (
+            <div className="case-empty-state" role="status">
+              <span>CASE STUDIES</span>
+              <p>{content.noPublishedCases}</p>
+            </div>
           )}
 
+          <AdditionalEvidence caseStudies={evidenceCases} content={content} language={language} />
           <p className="confidential-note"><span>ⓘ</span>{content.confidential}</p>
         </div>
       </section>
 
-      {selectedProject && (
-        <ProjectModal
+      {selectedCase?.detail && (
+        <CaseDetailModal
+          caseStudy={selectedCase}
           content={content}
           language={language}
-          onClose={closeProject}
-          project={selectedProject}
+          onClose={closeCase}
+          previewMode={previewMode}
         />
       )}
     </>

@@ -4,9 +4,9 @@ import "./globals.css";
 export const dynamic = "force-static";
 
 const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
-const title = "Khánh Đoan — Full-stack Marketer & Chuyên gia Performance Ads";
+const title = "Khánh Đoan — Performance Marketing & Account Management";
 const description =
-  "Portfolio của Khánh Đoan — full-stack marketer với 3 năm kinh nghiệm, chuyên sâu Performance Ads và quản lý hơn 600 triệu đồng ngân sách quảng cáo mỗi tháng.";
+  "Portfolio Performance Marketing & Account Management của Khánh Đoan — chiến lược paid media, tối ưu funnel, phân tích hiệu suất và điều phối account.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     title,
     description,
     type: "website",
-    images: [{ url: `${siteUrl}/og-v2.png`, width: 1736, height: 875, alt: "Khánh Đoan — Full-stack Marketer" }],
+    images: [{ url: `${siteUrl}/og-v2.png`, width: 1734, height: 907, alt: "Khánh Đoan — Performance Marketing & Account Management" }],
   },
   twitter: {
     card: "summary_large_image",

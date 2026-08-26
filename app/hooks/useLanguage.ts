@@ -19,12 +19,12 @@ export function useLanguage() {
     window.localStorage.setItem("kd-language", language);
     document.documentElement.lang = language;
     document.title = language === "vi"
-      ? "Khánh Đoan — Full-stack Marketer & Chuyên gia Performance Ads"
-      : "Khánh Đoan — Full-stack Marketer & Performance Ads Specialist";
+      ? "Khánh Đoan — Performance Marketing & Account Management"
+      : "Khánh Đoan — Performance Marketing & Account Management";
 
     const description = language === "vi"
-      ? "Portfolio của Khánh Đoan — full-stack marketer với 3 năm kinh nghiệm, chuyên sâu Performance Ads và quản lý hơn 600 triệu đồng ngân sách quảng cáo mỗi tháng."
-      : "Portfolio of Khánh Đoan, a full-stack marketer with 3 years of experience specializing in Performance Ads and managing more than USD 23,000 in monthly media spend.";
+      ? "Portfolio Performance Marketing & Account Management của Khánh Đoan — chiến lược paid media, tối ưu funnel, phân tích hiệu suất và điều phối account."
+      : "Khánh Đoan’s Performance Marketing & Account Management portfolio — paid media strategy, funnel optimization, performance analysis, and account coordination.";
     document.querySelector('meta[name="description"]')?.setAttribute("content", description);
   }, [language]);
 
