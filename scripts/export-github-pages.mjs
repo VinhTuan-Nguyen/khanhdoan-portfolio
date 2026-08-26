@@ -32,18 +32,13 @@ if (basePath) {
   await rm(nestedBasePath, { recursive: true, force: true });
 }
 
-const worker = (await import(pathToFileURL(serverEntry).href)).default;
-const pendingTasks = [];
-const response = await worker.fetch(
-  new Request(`${siteUrl}/`),
-  {},
-  {
-    waitUntil(task) {
-      pendingTasks.push(task);
-    },
-    passThroughOnException() {},
-  },
-);
+const handler = (await import(pathToFileURL(serverEntry).href)).default;
+
+if (typeof handler !== "function") {
+  throw new TypeError("Vinext server entry does not export a request handler");
+}
+
+const response = await handler(new Request(`${siteUrl}/`));
 
 if (!response.ok) {
   throw new Error(`Unable to render the landing page: HTTP ${response.status}`);
@@ -69,7 +64,6 @@ await Promise.all([
   writeFile(join(pagesDirectory, "index.html"), html, "utf8"),
   writeFile(join(pagesDirectory, "404.html"), html, "utf8"),
   writeFile(join(pagesDirectory, ".nojekyll"), "", "utf8"),
-  Promise.allSettled(pendingTasks),
 ]);
 
 console.log(`GitHub Pages artifact created at ${pagesDirectory} (${new Set(assetUrls).size} assets verified)`);
